@@ -1,0 +1,93 @@
+package com.green.greengram.config.util;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+@Slf4j
+@Component //빈등록
+public class MyFileUtils {
+    private final String uploadDirectory;
+
+    public String getUploadPath() {
+        return uploadDirectory;
+    }
+
+    public MyFileUtils(@Value("${constants.file.upload-directory}") String uploadDirectory) {
+        log.info("MyFileUtils - 생성자: {}", uploadDirectory);
+        this.uploadDirectory = uploadDirectory;
+    }
+
+    public void makeFolders(String path) {
+        File file = new File(uploadDirectory, path);
+        if(!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+
+//파일명에서 확장자 추출 (. 포함)
+    public String getExt(String fileName) {
+        if (fileName == null || !fileName.contains(".")) {
+            log.warn("파일명에 확장자가 없습니다: {}", fileName);
+            return ""; // 또는 ".bin" 같은 기본 확장자를 리턴해도 됨
+        }
+
+        int lastIdx = fileName.lastIndexOf(".");
+        return fileName.substring(lastIdx);
+    }
+//    public String getExt(String fileName) {
+//        int lastIdx = fileName.lastIndexOf(".");
+//        return fileName.substring(lastIdx);
+//    }
+
+    //랜덤파일명 생성
+    public String makeRandomFileName() {
+        return UUID.randomUUID().toString();
+    }
+
+    //랜덤파일명 + 확장자 생성하여 리턴
+    public String makeRandomFileName(String originalFileName) {
+        return makeRandomFileName() + getExt(originalFileName);
+    }
+
+    public String makeRandomFileName(MultipartFile file) {
+        String originalFileName = file.getOriginalFilename();
+        return makeRandomFileName(originalFileName);
+    }
+
+    //파일을 원하는 경로에 저장
+    public void transferTo(MultipartFile mf, String path) throws IOException {
+        Path transPath = Paths.get(String.format("%s/%s", uploadDirectory, path)).toAbsolutePath();
+        log.info("transPath: {}", transPath.toString());
+        mf.transferTo(transPath.toFile());
+    }
+
+    //폴더 삭제, e.g. "user/1"
+    public void deleteFolder(String path, boolean deleteRootFolder) {
+        File folder = new File(path);
+        if(folder.exists() && folder.isDirectory()) { //폴더가 존재하면서 디렉토리인가?
+            File[] includedFiles = folder.listFiles();
+
+            for(File f : includedFiles) {
+                if(f.isDirectory()) {
+                    deleteFolder(f.getAbsolutePath(), true);
+                } else {
+                    f.delete();
+                }
+            }
+
+            if(deleteRootFolder) {
+                folder.delete();
+            }
+        }
+
+    }
+}
