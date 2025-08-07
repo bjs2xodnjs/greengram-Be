@@ -85,7 +85,7 @@ public class JwtTokenManager {
         setAccessTokenInCookie(response, accessToken);
     }
 
-    public void logout(HttpServletResponse response) {
+    public void signOut(HttpServletResponse response) {
         deleteAccessTokenInCookie(response);
         deleteRefreshTokenInCookie(response);
     }
@@ -94,7 +94,7 @@ public class JwtTokenManager {
         String accessToken = getAccessTokenFromCookie(request);
         if(accessToken == null){ return null; }
         JwtUser jwtUser = getJwtUserFromToken(accessToken);
-        if(jwtUser == null){ return null; }
+        if(jwtUser == null) { return null; }
         UserPrincipal userPrincipal = new UserPrincipal(jwtUser.getSignedUserId(), jwtUser.getRoles());
         return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
     }

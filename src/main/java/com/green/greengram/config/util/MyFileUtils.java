@@ -14,39 +14,19 @@ import java.util.UUID;
 @Slf4j
 @Component //빈등록
 public class MyFileUtils {
-    private final String uploadDirectory;
-
-    public String getUploadPath() {
-        return uploadDirectory;
-    }
-
-    public MyFileUtils(@Value("${constants.file.upload-directory}") String uploadDirectory) {
-        log.info("MyFileUtils - 생성자: {}", uploadDirectory);
-        this.uploadDirectory = uploadDirectory;
-    }
 
     public void makeFolders(String path) {
-        File file = new File(uploadDirectory, path);
+        File file = new File(path);
         if(!file.exists()) {
             file.mkdirs();
         }
     }
 
-
-//파일명에서 확장자 추출 (. 포함)
+    //파일명에서 확장자 추출 (. 포함)
     public String getExt(String fileName) {
-        if (fileName == null || !fileName.contains(".")) {
-            log.warn("파일명에 확장자가 없습니다: {}", fileName);
-            return ""; // 또는 ".bin" 같은 기본 확장자를 리턴해도 됨
-        }
-
         int lastIdx = fileName.lastIndexOf(".");
         return fileName.substring(lastIdx);
     }
-//    public String getExt(String fileName) {
-//        int lastIdx = fileName.lastIndexOf(".");
-//        return fileName.substring(lastIdx);
-//    }
 
     //랜덤파일명 생성
     public String makeRandomFileName() {
@@ -65,7 +45,7 @@ public class MyFileUtils {
 
     //파일을 원하는 경로에 저장
     public void transferTo(MultipartFile mf, String path) throws IOException {
-        Path transPath = Paths.get(String.format("%s/%s", uploadDirectory, path)).toAbsolutePath();
+        Path transPath = Paths.get(path).toAbsolutePath();
         log.info("transPath: {}", transPath.toString());
         mf.transferTo(transPath.toFile());
     }
