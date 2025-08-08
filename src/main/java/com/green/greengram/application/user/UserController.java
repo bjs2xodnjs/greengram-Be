@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenManager jwtTokenManager;
 
-    @PostMapping("/sign-up")
+    @PostMapping("/sign-up") // 회원가입
     public ResultResponse<?> signUp(@Valid @RequestPart UserSignUpReq req
             , @RequestPart(required = false) MultipartFile pic) {
         log.info("req: {}", req);
@@ -30,7 +30,7 @@ public class UserController {
         return new ResultResponse<>("", 1);
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/sign-in") // 로그인 및 토큰발급 JWT 사용
     public ResultResponse<?> signIn(@Valid @RequestBody UserSignInReq req, HttpServletResponse response) {
         log.info("req: {}", req);
         UserSignInDto userSignInDto = userService.signIn(req);
@@ -38,13 +38,13 @@ public class UserController {
         return new ResultResponse<>("sign-in 성공", userSignInDto.getUserSignInRes());
     }
 
-    @PostMapping("/sign-out")
+    @PostMapping("/sign-out") // 로그아웃 (토근 무효화) JWT 삭제
     public ResultResponse<?> signOut(HttpServletResponse response) {
         jwtTokenManager.signOut(response);
         return new ResultResponse<>("sign-out 성공", null);
     }
 
-    @PostMapping("/reissue")
+    @PostMapping("/reissue")  // AccessToken 재발급
     public ResultResponse<?> reissue(HttpServletResponse response, HttpServletRequest request) {
         jwtTokenManager.reissue(request, response);
         return new ResultResponse<>("AccessToken 재발행 성공", null);
