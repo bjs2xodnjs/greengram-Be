@@ -35,6 +35,7 @@ public class User extends UpdatedAt{
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
         private List<UserRole> userRoles = new ArrayList<>(1);
 
+
         public void addUserRoles(List<EnumUserRole> enumUserRole) {
                 for(EnumUserRole e : enumUserRole) {
                         UserRoleIds ids = new UserRoleIds(this.userId, e);
