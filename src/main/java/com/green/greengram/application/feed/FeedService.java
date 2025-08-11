@@ -1,6 +1,9 @@
 package com.green.greengram.application.feed;
 
+import com.green.greengram.application.feed.model.FeedGetDto;
+import com.green.greengram.application.feed.model.FeedGetRes;
 import com.green.greengram.application.feed.model.FeedPostReq;
+import com.green.greengram.application.feed.model.FeedPostRes;
 import com.green.greengram.application.user.UserRepository;
 import com.green.greengram.config.util.ImgUploadManager;
 import com.green.greengram.entity.Feed;
@@ -20,9 +23,10 @@ import java.util.List;
 public class FeedService {
     private final FeedRepository feedRepository;
     private final ImgUploadManager imgUploadManager;
+    private final FeedMapper feedMapper;
 
     @Transactional
-    public void postFeed(long signedUserId, FeedPostReq req, List<MultipartFile> pics) {
+    public FeedPostRes postFeed(long signedUserId, FeedPostReq req, List<MultipartFile> pics) {
         User writerUser = new User();
         writerUser.setUserId(signedUserId);
 
@@ -38,5 +42,17 @@ public class FeedService {
 
         feed.addFeedPics(fileNames);
 
+        return new FeedPostRes(feed. getFeedId(), fileNames); // 이건 나중에 프론트랑 작업할 예정
+
     }
+    public List<FeedGetRes> getFeedList(FeedGetDto dto) {
+        List<FeedGetRes> list = feedMapper.findAllLimitedTo(dto);
+        //각 피드에서 사진 가져오기
+        for(FeedGetRes feedGetRes : list) {
+            feedGetRes.setPics(feedMapper.findAllPicByFeedId(feedGetRes.getFeedId()));
+        }
+        return list;
+    }
+
 }
+
