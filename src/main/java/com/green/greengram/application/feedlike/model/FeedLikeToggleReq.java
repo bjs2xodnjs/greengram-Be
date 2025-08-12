@@ -9,4 +9,6 @@ import lombok.ToString;
 public class FeedLikeToggleReq {
     @Positive
     private Long feedId;
+
+
 }
