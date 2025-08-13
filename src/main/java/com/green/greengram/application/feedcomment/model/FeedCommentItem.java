@@ -6,9 +6,8 @@ import lombok.Getter;
 public class FeedCommentItem {
     private long feedCommentId;
     private String comment;
-    private long writerUserid;
+    private long writerUserId;
     private String writerUid;
-    private String writerNickname;
+    private String writerNickName;
     private String writerPic;
-
 }
