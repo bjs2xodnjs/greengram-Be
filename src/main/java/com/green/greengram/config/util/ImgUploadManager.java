@@ -3,6 +3,7 @@ package com.green.greengram.config.util;
 import com.green.greengram.config.constants.ConstFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,11 +41,30 @@ public class ImgUploadManager {
         return randomFileNames;
     }
 
+    private String makeProfileDirectoryPath(long userId) {
+        return String.format("%s/%s/%d",  constFile.getUploadDirectory(), constFile.getProfilePic(), userId);
+    }
+
+    //프로파일 유저 폴더 삭제
+    public void removeProfileDirectory(long userId) {
+        String directory = makeProfileDirectoryPath(userId);
+        myFileUtils.deleteFolder(directory, true);
+    }
+
+    private String makeFeedDirectoryPath(long feedId) {
+        return String.format("%s/%s/%d",  constFile.getUploadDirectory(), constFile.getFeedPic(), feedId);
+    }
+
+    //피드 폴더 삭제
+    public void removeFeedDirectory(long feedId) {
+        String directory = makeFeedDirectoryPath(feedId);
+        myFileUtils.deleteFolder(directory, true);
+    }
 
     //저장한 파일명 리턴
     public String saveProfilePic(long userId, MultipartFile profilePicFile) {
         //폴더 생성
-        String directory = String.format("%s/%s/%d", constFile.getUploadDirectory(), constFile.getProfilePic(), userId);
+        String directory = makeProfileDirectoryPath(userId);
         myFileUtils.makeFolders(directory);
 
         String randomFileName = myFileUtils.makeRandomFileName(profilePicFile);

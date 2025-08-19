@@ -2,16 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.green.greengram.application.user.UserMapper">
 
-    <select id="getProfileUserId">
+    <select id="findProfileByUserId">
         SELECT u.user_id, u.pic, u.created_at, u.uid, u.nick_name
-        , COUNT(f.feed_id) AS feedCount
-        , COUNT(fl.user_id) AS allFeedLikeCount
+        , COUNT(DISTINCT f.feed_id) AS feedCount
+        , COUNT(DISTINCT f.feed_id, fl.user_id) AS allFeedLikeCount
+        , COUNT(DISTINCT fwer.from_user_id) AS followerCount <!-- 프로필 주인을 팔로우 하는 사람들은 몇 명인가 -->
+        , COUNT(DISTINCT fwing.to_user_id) AS followingCount <!-- 프로필 주인이 팔로우 하는 사람들은 몇 명인가 -->
+        , MAX(IF(fwer.from_user_id = #{signedUserId}, 1, 0)) <!-- 로그인 사용자가 프로필 주인을 팔로우한다면 1, 아니면 0 -->
+        + MAX(IF(fwing.to_user_id = #{signedUserId}, 2, 0)) <!-- 프로필 주인이 로그인 사용자를 팔로우한다면 2, 아니면 0 -->
+        AS followState
         FROM user u
         LEFT JOIN feed f
         ON f.writer_user_id = u.user_id
         LEFT JOIN feed_like fl
         ON fl.feed_id = f.feed_id
-        WHERE u.user_id = #{profileUserId};
+        LEFT JOIN user_follow fwer <!-- 프로필 주인을 팔로우 하는 사람들 정보 -->
+        ON fwer.to_user_id = u.user_id
+        LEFT JOIN user_follow fwing <!-- 프로필 주인이 팔로우 하는 사람들 정보 -->
+        ON fwing.from_user_id = u.user_id
+        WHERE u.user_id = #{profileUserId}
     </select>
 
 </mapper>

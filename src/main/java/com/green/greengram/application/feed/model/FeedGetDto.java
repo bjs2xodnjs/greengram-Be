@@ -1,6 +1,6 @@
 package com.green.greengram.application.feed.model;
 
-import jakarta.validation.constraints.NotNull;
+import jdk.jfr.Name;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,4 +14,5 @@ public class FeedGetDto {
     private long signedUserId;
     private int startIdx;
     private int size;
+    private Long profileUserId;
 }

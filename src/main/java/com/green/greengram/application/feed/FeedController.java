@@ -5,6 +5,7 @@ import com.green.greengram.config.model.ResultResponse;
 import com.green.greengram.config.model.UserPrincipal;
 import com.green.greengram.entity.Feed;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -50,10 +51,19 @@ public class FeedController {
                 .signedUserId(userPrincipal.getSignedUserId())
                 .startIdx((req.getPage() - 1) * req.getRowPerPage())
                 .size(req.getRowPerPage())
+                .profileUserId(req.getProfileUserId())
                 .build();
         List<FeedGetRes> result = feedService.getFeedList(feedGetDto);
         return new ResultResponse<>(String.format("rows: %d", result.size())
                 , result);
     }
-}
 
+    @DeleteMapping
+    public ResultResponse<?> deleteFeed(@AuthenticationPrincipal UserPrincipal userPrincipal
+            , @RequestParam("feed_id") @Valid @Positive Long feedId) {
+        log.info("signedUserId: {}", userPrincipal.getSignedUserId());
+        log.info("feedId: {}", feedId);
+        feedService.deleteFeed(userPrincipal.getSignedUserId(), feedId);
+        return new ResultResponse<>("피드가 삭제되었습니다.", null);
+    }
+}
