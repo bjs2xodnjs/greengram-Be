@@ -14,6 +14,9 @@ public class UserSignInReq {
     private String uid;
 
     @NotNull(message = "비밀번호는 필수로 입력해주세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{8,20}$")
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*()_+\\-={}\\[\\]:;\"'<>?,./]{8,20}$",
+            message = "비밀번호는 영문자와 숫자를 포함하고, 특수문자 포함 8~20자 이내여야 합니다."
+    )
     private String upw;
 }

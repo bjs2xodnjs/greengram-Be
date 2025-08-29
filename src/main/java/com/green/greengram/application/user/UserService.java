@@ -2,12 +2,10 @@ package com.green.greengram.application.user;
 
 import com.green.greengram.application.user.model.*;
 import com.green.greengram.config.enumcode.model.EnumUserRole;
-import com.green.greengram.config.jwt.JwtTokenManager;
-import com.green.greengram.config.jwt.JwtTokenProvider;
 import com.green.greengram.config.model.JwtUser;
+import com.green.greengram.config.security.SignInProviderType;
 import com.green.greengram.config.util.ImgUploadManager;
 import com.green.greengram.entity.User;
-import com.green.greengram.entity.UserRole;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -38,6 +35,7 @@ public class UserService {
         user.setUid(req.getUid());
         user.setUpw(hashedPassword);
         user.addUserRoles(req.getRoles());
+        user.setProviderType(SignInProviderType.LOCAL);
 
         userRepository.save(user);
 

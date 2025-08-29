@@ -1,11 +1,9 @@
 package com.green.greengram.application.user.model;
 
 import com.green.greengram.config.enumcode.model.EnumUserRole;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.ToString;
-
 import java.util.List;
 
 @Getter
@@ -18,7 +16,6 @@ public class UserSignUpReq {
     @NotNull(message = "비밀번호는 필수로 입력하셔야 합니다.")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{10,}$", message = "비밀번호는 영문자, 숫자, 특수기호로 구성되며 10자 이상이어야 합니다.")
     private String upw;
-
 
     @Pattern(regexp = "^[가-힣]{2,10}$", message = "닉네임은 한글로 2~10자까지 가능합니다.")
     private String nickName;

@@ -6,14 +6,16 @@ import lombok.Setter;
 
 import java.util.List;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class FeedGetRes {
-    private long feedId;
+    private Long feedId;
     private String contents;
     private String location;
     private String createdAt;
-    private long writerUserId;
+    private Long writerUserId;
     private String writerUid;
     private String writerNickName;
     private String writerPic;

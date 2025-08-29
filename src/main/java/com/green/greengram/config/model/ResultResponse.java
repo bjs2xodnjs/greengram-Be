@@ -8,5 +8,4 @@ import lombok.Getter;
 public class ResultResponse<T> {
     private String message;
     private T result;
-
 }

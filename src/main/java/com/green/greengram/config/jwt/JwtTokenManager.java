@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenManager {
-    private final ConstJwt constJwt;
-    private final CookieUtils cookieUtils;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final ConstJwt constJwt; //설정 내용(문자열)
+    private final CookieUtils cookieUtils; //쿠키 관련
+    private final JwtTokenProvider jwtTokenProvider; //JWT 관련
 
     public void issue(HttpServletResponse response, JwtUser jwtUser) {
         setAccessTokenInCookie(response, jwtUser);
@@ -35,8 +35,11 @@ public class JwtTokenManager {
     }
 
     public void setAccessTokenInCookie(HttpServletResponse response, String accessToken) {
-        cookieUtils.setCookie(response, constJwt.getAccessTokenCookieName(), accessToken
-                , constJwt.getAccessTokenCookieValiditySeconds(), constJwt.getAccessTokenCookiePath());
+        cookieUtils.setCookie(response
+                , constJwt.getAccessTokenCookieName()
+                , accessToken
+                , constJwt.getAccessTokenCookieValiditySeconds()
+                , constJwt.getAccessTokenCookiePath());
     }
 
     public String getAccessTokenFromCookie(HttpServletRequest request) {
@@ -71,6 +74,12 @@ public class JwtTokenManager {
         return jwtTokenProvider.getJwtUserFromToken(token);
     }
 
+    private void deleteSocialLogin(HttpServletResponse response) {
+        cookieUtils.deleteCookie(response, "JSESSIONID", null);
+        cookieUtils.deleteCookie(response, "Authorization", null);
+        cookieUtils.deleteCookie(response, "RefreshToken", null);
+    }
+
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
         //request에서 refreshToken을 얻는다.
         String refreshToken = getRefreshTokenFromCookie(request);
@@ -88,13 +97,14 @@ public class JwtTokenManager {
     public void signOut(HttpServletResponse response) {
         deleteAccessTokenInCookie(response);
         deleteRefreshTokenInCookie(response);
+        deleteSocialLogin(response);
     }
 
     public Authentication getAuthentication(HttpServletRequest request) {
         String accessToken = getAccessTokenFromCookie(request);
         if(accessToken == null){ return null; }
         JwtUser jwtUser = getJwtUserFromToken(accessToken);
-        if(jwtUser == null) { return null; }
+        //if(jwtUser == null) { return null; } //토큰이 오염됐을 시 예외발생하기 때문에 null처리는 안 해도 된다.
         UserPrincipal userPrincipal = new UserPrincipal(jwtUser);
         return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
     }

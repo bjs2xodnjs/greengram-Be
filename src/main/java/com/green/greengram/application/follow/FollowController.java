@@ -4,6 +4,7 @@ import com.green.greengram.application.follow.model.FollowPostReq;
 import com.green.greengram.config.model.ResultResponse;
 import com.green.greengram.config.model.UserPrincipal;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +28,7 @@ public class FollowController {
 
     @DeleteMapping
     public ResultResponse<?> deleteUserFollow(@AuthenticationPrincipal UserPrincipal userPrincipal
-            , @RequestParam("to_user_id") Long toUserId) {
+            , @Valid @RequestParam("to_user_id") @Positive Long toUserId) {
         log.info("fromUserId: {}", userPrincipal.getSignedUserId());
         log.info("toUserId: {}", toUserId);
         followService.deleteUserFollow(userPrincipal.getSignedUserId(), toUserId);
