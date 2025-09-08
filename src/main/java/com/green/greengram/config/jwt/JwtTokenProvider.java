@@ -28,6 +28,13 @@ public class JwtTokenProvider {
         this.constJwt = constJwt;
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(constJwt.getSecretKey()));
     }
+    public String generateAccessToken(JwtUser jwtUser) {
+        return generateToken(jwtUser, constJwt.getAccessTokenValidityMilliseconds());
+    }
+
+    public String generateRefreshToken(JwtUser jwtUser) {
+        return generateToken(jwtUser, constJwt.getRefreshTokenValidityMilliseconds());
+    }
 
     //JWT 토큰 생성
     public String generateToken(JwtUser jwtUser, long tokenValidityMilliSeconds) {

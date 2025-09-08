@@ -6,6 +6,7 @@ import com.green.greengram.config.model.JwtUser;
 import com.green.greengram.config.security.SignInProviderType;
 import com.green.greengram.config.util.ImgUploadManager;
 import com.green.greengram.entity.User;
+import com.green.greengram.entity.UserRole;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -60,8 +62,12 @@ public class UserService {
 //            resultList.add(role.getUserRoleIds().getRoleCode());
 //        }
 
-        List<EnumUserRole> roles = user.getUserRoles().stream().map(item -> item.getUserRoleIds().getRoleCode()).toList();
-
+//      List<EnumUserRole> roles = user.getUserRoles().stream().map(item -> item.getUserRoleIds().getRoleCode()).toList(); 이건 스트림
+        List<EnumUserRole> roles = new ArrayList<>();
+        for (UserRole item : user.getUserRoles()) {
+            EnumUserRole roleCode = item.getUserRoleIds().getRoleCode();
+            roles.add(roleCode);
+        }
         log.info("roles: {}", roles);
         JwtUser jwtUser = new JwtUser(user.getUserId(), roles);
 
